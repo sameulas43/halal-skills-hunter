@@ -20,15 +20,24 @@ from groq import Groq
 
 import sys
 sys.path.append(os.path.dirname(__file__))
-from sentinel_config import *
+try:
+    from sentinel_config import *
+except:
+    pass
+
+# Lecture directe des variables — fallback si config non chargé
+DISCORD_WEBHOOK = os.getenv("DW_URL", os.getenv("DISCORD_WEBHOOK_URL", ""))
+GROQ_API_KEY    = os.getenv("LA", os.getenv("GROQ_API_KEY", ""))
+AGENT_SECRET    = os.getenv("SS", os.getenv("SENTINEL_SECRET", "sentinel-secret-key"))
+MANAGER_URL     = os.getenv("MANAGER_URL", "http://localhost:5001")
 
 # ─── INIT ─────────────────────────────────────────────────
 app   = Flask(__name__)
 groq  = Groq(api_key=GROQ_API_KEY)
 
 GITHUB_TOKEN  = os.getenv("GITHUB_TOKEN", "")
-MAIL_ADDRESS = os.getenv("MAIL_ADDRESS", "")      # ton@gmail.com
-MAIL_PASSWORD = os.getenv("GMAIL_APP_PASSWORD", "") # App Password Gmail
+MAIL_ADDRESS = os.getenv("MF", "")      # ton@gmail.com
+MAIL_PASSWORD = os.getenv("MP", "") # App Password Gmail
 
 SEARCH_TOPICS = [
     "ib_insync interactive brokers python",

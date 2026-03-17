@@ -525,6 +525,9 @@ def run_search(topics: list = None):
     os.makedirs("skills-output", exist_ok=True)
 
     # Génère le fichier .md résumé
+    summary_path = f"skills-output/WEEKLY-SUMMARY-{date}.md"
+    os.makedirs("skills-output", exist_ok=True)
+
     md_lines = [
         f"# 🛡️ SENTINEL — Weekly Skills Report — {date}",
         f"_{len(uniq)} ressources sécurisées et pertinentes_\n",
@@ -542,20 +545,35 @@ def run_search(topics: list = None):
     with open(summary_path, "w", encoding="utf-8") as f:
         f.write("\n".join(md_lines))
 
-    # Envoie l'email
-    html = build_email_html(uniq, date)
-    email_sent = send_email(
-        subject     = f"🛡️ SENTINEL — {len(uniq)} skills validés — {date}",
-        body_html   = html,
-        attachment_path = summary_path
+    # 📊 Rapport complet sur Discord (au lieu de l'email)
+    # Envoie les top 5 skills détaillés
+    top5 = sorted(uniq, key=lambda x: x["security"]["score"], reverse=True)[:5]
+    skills_text = "\n".join(
+        f"**{i}.** [{s['title']}]({s['url']})\n"
+        f"   🔒 {s['security']['score']}/100 | 🌐 {s.get('source','')}"
+        for i, s in enumerate(top5, 1)
     )
 
-    if email_sent:
-        send_discord("📧 Email hebdomadaire envoyé", [
-            {"name": "📬 Destinataire", "value": MAIL_ADDRESS or "Non configuré", "inline": True},
-            {"name": "📎 Pièce jointe", "value": f"WEEKLY-SUMMARY-{date}.md",       "inline": True},
-            {"name": "📊 Contenu",      "value": f"{len(uniq)} skills + tableau sécurité", "inline": False},
-        ], color=0x2ECC71)
+    send_discord(
+        f"📋 WEEKLY SKILLS REPORT — {date}",
+        [
+            {"name": "📊 Total validé",
+             "value": f"**{len(uniq)}** ressources sécurisées + pertinentes",
+             "inline": True},
+            {"name": "🔒 Score min",
+             "value": f"**{SECURITY_MIN_SCORE}/100**",
+             "inline": True},
+            {"name": "─────────────────", "value": " ", "inline": False},
+            {"name": "🏆 Top 5 ressources",
+             "value": skills_text or "Aucune",
+             "inline": False},
+            {"name": "─────────────────", "value": " ", "inline": False},
+            {"name": "🧠 Pour améliorer Claude",
+             "value": "Uploader `WEEKLY-SUMMARY.md` dans le projet Claude chaque lundi",
+             "inline": False},
+        ],
+        color=0x2ECC71
+    )
 
     # Rapport au Manager
     report_to_manager(

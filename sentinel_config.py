@@ -37,7 +37,7 @@ IB_CLIENT_ID            = int(os.getenv("IB_CLIENT_ID", "1"))
 # ─── PORTEFEUILLE CIBLE ───────────────────────────────────
 PORTFOLIO = {
     "SGOL": 0.15,
-    "PHAG": 0.10,
+    "SLV": 0.10,
     "ICLN": 0.15,
     "ENPH": 0.10,
     "MOO":  0.10,

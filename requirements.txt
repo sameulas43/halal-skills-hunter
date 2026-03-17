@@ -1,2 +1,21 @@
-requests==2.31.0
-schedule==1.2.1
+# SENTINEL — Dependencies
+# Compatible Python 3.13
+
+# Core
+requests>=2.31.0
+schedule>=1.2.1
+python-dotenv>=1.0.0
+
+# LLM
+groq>=0.4.2
+
+# Finance
+yfinance>=0.2.37
+pandas>=2.2.0
+numpy>=1.26.0
+
+# API inter-agents
+flask>=3.0.0
+
+# IB (uniquement sur le Trading Agent local)
+# ib_insync==0.9.86  ← installer manuellement en local
